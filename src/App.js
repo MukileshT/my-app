@@ -1,38 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-export default function CTFAuthPortal() {
+export default function ArenaLogin() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    team: ''
+    confirmPassword: ''
   });
-  const [matrixRain, setMatrixRain] = useState([]);
-
-  useEffect(() => {
-    // Generate matrix rain effect
-    const columns = Math.floor(window.innerWidth / 20);
-    const drops = [];
-    for (let i = 0; i < columns; i++) {
-      drops.push({
-        x: i * 20,
-        y: Math.random() * -1000,
-        speed: Math.random() * 3 + 2
-      });
-    }
-    setMatrixRain(drops);
-
-    const interval = setInterval(() => {
-      setMatrixRain(prev => prev.map(drop => ({
-        ...drop,
-        y: drop.y > window.innerHeight ? -20 : drop.y + drop.speed
-      })));
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, []);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -41,13 +17,20 @@ export default function CTFAuthPortal() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (isLogin) {
-      console.log('Login:', formData);
+      console.log('Login attempt:', formData);
     } else {
-      console.log('Register:', formData);
+      console.log('Register attempt:', formData);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    console.log('Google login clicked');
+  };
+
+  const handleMicrosoftLogin = () => {
+    console.log('Microsoft login clicked');
   };
 
   const toggleMode = () => {
@@ -56,8 +39,7 @@ export default function CTFAuthPortal() {
       username: '',
       email: '',
       password: '',
-      confirmPassword: '',
-      team: ''
+      confirmPassword: ''
     });
   };
 
@@ -70,96 +52,44 @@ export default function CTFAuthPortal() {
           box-sizing: border-box;
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
-
-        body {
-          font-family: 'Share Tech Mono', monospace;
-          overflow-x: hidden;
-        }
-
-        .ctf-container {
+        .arena-container {
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 20px;
           position: relative;
-          background: #000000;
           overflow: hidden;
+          background: linear-gradient(135deg, #00274d 0%, #003d73 50%, #00274d 100%);
         }
 
-        .matrix-bg {
+        .background-particles {
           position: absolute;
           inset: 0;
-          pointer-events: none;
           overflow: hidden;
-        }
-
-        .matrix-char {
-          position: absolute;
-          color: #00ff41;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 14px;
-          opacity: 0.5;
-          text-shadow: 0 0 8px #00ff41;
-        }
-
-        .scan-line {
-          position: absolute;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(transparent, #00ff41, transparent);
-          animation: scan 8s linear infinite;
-          opacity: 0.1;
-        }
-
-        @keyframes scan {
-          0% { top: 0; }
-          100% { top: 100%; }
-        }
-
-        .grid-overlay {
-          position: absolute;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
-          background-size: 50px 50px;
           pointer-events: none;
         }
 
-        .auth-wrapper {
-          position: relative;
-          width: 100%;
-          max-width: 480px;
-          z-index: 10;
+        .particle {
+          position: absolute;
+          border-radius: 50%;
+          background: white;
+          opacity: 0.05;
         }
 
-        @keyframes glitchAnim {
-          0% { transform: translate(0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(-2px, -2px); }
-          60% { transform: translate(2px, 2px); }
-          80% { transform: translate(2px, -2px); }
-          100% { transform: translate(0); }
+        @keyframes float {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(30px, -30px) scale(1.1);
+          }
         }
 
-        .auth-card {
-          background: rgba(0, 0, 0, 0.85);
-          border: 2px solid #00ff41;
-          border-radius: 0;
-          box-shadow:
-            0 0 20px rgba(0, 255, 65, 0.3),
-            inset 0 0 20px rgba(0, 255, 65, 0.05);
-          padding: 40px;
-          position: relative;
-          animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
+        @keyframes fadeInUp {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
           }
           to {
             opacity: 1;
@@ -167,136 +97,35 @@ export default function CTFAuthPortal() {
           }
         }
 
-        .auth-card::before {
-          content: '';
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(45deg, #00ff41, #00aa2b, #00ff41);
-          z-index: -1;
-          border-radius: 0;
-          opacity: 0;
-          transition: opacity 0.3s;
+        .login-wrapper {
+          position: relative;
+          width: 100%;
+          max-width: 450px;
+          animation: fadeInUp 0.8s ease-out;
         }
 
-        .auth-card:hover::before {
-          opacity: 0.5;
-          animation: pulse 2s infinite;
+        .login-card {
+          backdrop-filter: blur(20px);
+          background: rgba(0, 0, 0, 0.4);
+          border-radius: 24px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+          padding: 60px 40px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          transition: all 0.3s ease;
         }
 
-        @keyframes pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+        .login-card.hovered {
+          transform: scale(1.02);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
-        .corner-accent {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #00ff41;
-        }
-
-        .corner-tl {
-          top: -2px;
-          left: -2px;
-          border-right: none;
-          border-bottom: none;
-        }
-
-        .corner-tr {
-          top: -2px;
-          right: -2px;
-          border-left: none;
-          border-bottom: none;
-        }
-
-        .corner-bl {
-          bottom: -2px;
-          left: -2px;
-          border-right: none;
-          border-top: none;
-        }
-
-        .corner-br {
-          bottom: -2px;
-          right: -2px;
-          border-left: none;
-          border-top: none;
-        }
-
-        .auth-header {
+        .login-title {
+          font-size: 2.5rem;
+          font-weight: bold;
           text-align: center;
-          margin-bottom: 30px;
-        }
-
-        .auth-title {
-          font-family: 'Orbitron', sans-serif;
-          font-size: 2rem;
-          font-weight: 900;
-          color: #00ff41;
-          text-transform: uppercase;
-          letter-spacing: 4px;
-          margin-bottom: 5px;
-          text-shadow:
-            0 0 10px #00ff41,
-            0 0 20px #00ff41,
-            0 0 30px #00ff41;
-          animation: textGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes textGlow {
-          0%, 100% {
-            text-shadow:
-              0 0 10px #00ff41,
-              0 0 20px #00ff41,
-              0 0 30px #00ff41;
-          }
-          50% {
-            text-shadow:
-              0 0 15px #00ff41,
-              0 0 30px #00ff41,
-              0 0 45px #00ff41;
-          }
-        }
-
-        .auth-subtitle {
-          font-size: 0.75rem;
-          color: #00ff41;
-          opacity: 0.7;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-        }
-
-        .status-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          border-bottom: 1px solid #00ff41;
-          margin-bottom: 30px;
-          font-size: 0.75rem;
-          color: #00ff41;
-        }
-
-        .status-item {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-
-        .status-dot {
-          width: 6px;
-          height: 6px;
-          background: #00ff41;
-          border-radius: 50%;
-          animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
+          color: white;
+          margin-bottom: 40px;
+          letter-spacing: 0.5px;
         }
 
         .form-group {
@@ -305,212 +134,187 @@ export default function CTFAuthPortal() {
 
         .form-label {
           display: block;
-          color: #00ff41;
+          color: #d1d5db;
           font-size: 0.875rem;
+          font-weight: 500;
           margin-bottom: 8px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .form-label::before {
-          content: '> ';
-          color: #00ff41;
         }
 
         .form-input {
           width: 100%;
-          padding: 12px 15px;
-          background: rgba(0, 255, 65, 0.05);
-          border: 1px solid #00ff41;
-          color: #00ff41;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.95rem;
+          padding: 12px 16px;
+          border-radius: 8px;
+          background: rgba(31, 41, 55, 0.5);
+          border: 1px solid #4b5563;
+          color: white;
+          font-size: 1rem;
           outline: none;
           transition: all 0.3s ease;
         }
 
         .form-input::placeholder {
-          color: rgba(0, 255, 65, 0.3);
+          color: #9ca3af;
         }
 
         .form-input:focus {
-          background: rgba(0, 255, 65, 0.1);
-          box-shadow:
-            0 0 10px rgba(0, 255, 65, 0.3),
-            inset 0 0 10px rgba(0, 255, 65, 0.1);
-          border-color: #00ff41;
+          border-color: #3b82f6;
+          box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
-        .submit-btn {
+        .forgot-password {
+          text-align: right;
+          margin-bottom: 20px;
+        }
+
+        .forgot-link {
+          color: #60a5fa;
+          font-size: 0.875rem;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+          color: #93c5fd;
+        }
+
+        .sign-in-btn {
           width: 100%;
-          padding: 15px;
-          background: transparent;
-          border: 2px solid #00ff41;
-          color: #00ff41;
-          font-family: 'Orbitron', sans-serif;
+          padding: 12px 16px;
+          background: #2563eb;
+          color: white;
+          font-weight: 600;
           font-size: 1rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 3px;
+          border: none;
+          border-radius: 8px;
           cursor: pointer;
-          position: relative;
-          overflow: hidden;
           transition: all 0.3s ease;
+          transform: translateY(0);
         }
 
-        .submit-btn::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: #00ff41;
-          transition: left 0.3s ease;
-          z-index: -1;
-        }
-
-        .submit-btn:hover::before {
-          left: 0;
-        }
-
-        .submit-btn:hover {
-          color: #000000;
-          box-shadow: 0 0 20px #00ff41;
+        .sign-in-btn:hover {
+          background: #1d4ed8;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
         .divider {
           display: flex;
           align-items: center;
-          margin: 25px 0;
-          color: #00ff41;
-          opacity: 0.5;
+          margin: 30px 0;
         }
 
         .divider-line {
           flex: 1;
           height: 1px;
-          background: #00ff41;
+          background: #4b5563;
         }
 
         .divider-text {
-          padding: 0 15px;
-          font-size: 0.75rem;
-        }
-
-        .toggle-section {
-          text-align: center;
-          margin-top: 25px;
-          padding-top: 20px;
-          border-top: 1px solid rgba(0, 255, 65, 0.2);
-        }
-
-        .toggle-text {
-          color: #00ff41;
-          opacity: 0.7;
+          padding: 0 16px;
+          color: #9ca3af;
           font-size: 0.875rem;
-          margin-bottom: 10px;
         }
 
-        .toggle-btn {
-          background: transparent;
-          border: 1px solid #00ff41;
-          color: #00ff41;
-          padding: 8px 20px;
-          font-family: 'Share Tech Mono', monospace;
+        .social-buttons {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .social-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 12px 16px;
+          background: white;
+          color: #1f2937;
+          font-weight: 500;
+          border: none;
+          border-radius: 8px;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          font-size: 0.875rem;
-          letter-spacing: 1px;
+          transform: translateY(0);
         }
 
-        .toggle-btn:hover {
-          background: #00ff41;
-          color: #000000;
-          box-shadow: 0 0 15px #00ff41;
+        .social-btn:hover {
+          background: #f3f4f6;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .terminal-prompt {
-          color: #00ff41;
-          font-size: 0.75rem;
-          margin-top: 20px;
-          opacity: 0.6;
+        .social-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 8px;
+        }
+
+        .register-text {
           text-align: center;
+          color: #9ca3af;
+          font-size: 0.875rem;
+          margin-top: 20px;
+        }
+
+        .register-link {
+          color: #60a5fa;
+          font-weight: 500;
+          text-decoration: none;
+          transition: color 0.2s ease;
+          cursor: pointer;
+        }
+
+        .register-link:hover {
+          color: #93c5fd;
         }
 
         @media (max-width: 640px) {
-          .auth-card {
-            padding: 30px 25px;
+          .login-card {
+            padding: 40px 30px;
           }
 
-          .auth-title {
-            font-size: 1.5rem;
-            letter-spacing: 2px;
+          .login-title {
+            font-size: 2rem;
           }
 
-          .status-bar {
-            font-size: 0.65rem;
+          .social-buttons {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
 
-      <div className="ctf-container">
-        {/* Matrix Rain Background */}
-        <div className="matrix-bg">
-          {matrixRain.map((drop, i) => (
+      <div className="arena-container">
+        {/* Animated background particles */}
+        <div className="background-particles">
+          {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="matrix-char"
+              className="particle"
               style={{
-                left: `${drop.x}px`,
-                top: `${drop.y}px`
+                width: Math.random() * 100 + 20 + 'px',
+                height: Math.random() * 100 + 20 + 'px',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                animation: `float ${Math.random() * 10 + 10}s infinite ease-in-out`,
+                animationDelay: Math.random() * 5 + 's'
               }}
-            >
-              {String.fromCharCode(0x30A0 + Math.random() * 96)}
-            </div>
+            />
           ))}
         </div>
 
-        {/* Scan Line Effect */}
-        <div className="scan-line"></div>
+        {/* Login Card */}
+        <div className="login-wrapper">
+          <div
+            className={`login-card ${isHovered ? 'hovered' : ''}`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <h1 className="login-title">
+              {isLogin ? 'Enter the Arena' : 'Join the Arena'}
+            </h1>
 
-        {/* Grid Overlay */}
-        <div className="grid-overlay"></div>
-
-        {/* Auth Card */}
-        <div className="auth-wrapper">
-          <div className="auth-card">
-            {/* Corner Accents */}
-            <div className="corner-accent corner-tl"></div>
-            <div className="corner-accent corner-tr"></div>
-            <div className="corner-accent corner-bl"></div>
-            <div className="corner-accent corner-br"></div>
-
-            {/* Header */}
-            <div className="auth-header">
-              <h1 className="auth-title">
-                {isLogin ? 'ACCESS' : 'REGISTER'}
-              </h1>
-              <p className="auth-subtitle">CTF PORTAL v2.0</p>
-            </div>
-
-            {/* Status Bar */}
-            <div className="status-bar">
-              <div className="status-item">
-                <div className="status-dot"></div>
-                <span>SECURE</span>
-              </div>
-              <div className="status-item">
-                <span>ENCRYPTED</span>
-              </div>
-              <div className="status-item">
-                <span>{new Date().toLocaleTimeString()}</span>
-              </div>
-            </div>
-
-            {/* Form */}
             <div>
+              {/* Username Input (Register only) */}
               {!isLogin && (
                 <div className="form-group">
                   <label className="form-label">Username</label>
@@ -519,12 +323,13 @@ export default function CTFAuthPortal() {
                     name="username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="elite_hacker"
+                    placeholder="your_username"
                     className="form-input"
                   />
                 </div>
               )}
 
+              {/* Email Input */}
               <div className="form-group">
                 <label className="form-label">Email</label>
                 <input
@@ -532,25 +337,12 @@ export default function CTFAuthPortal() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="hacker@ctf.com"
+                  placeholder="your.email@example.com"
                   className="form-input"
                 />
               </div>
 
-              {!isLogin && (
-                <div className="form-group">
-                  <label className="form-label">Team Name</label>
-                  <input
-                    type="text"
-                    name="team"
-                    value={formData.team}
-                    onChange={handleInputChange}
-                    placeholder="cyber_warriors"
-                    className="form-input"
-                  />
-                </div>
-              )}
-
+              {/* Password Input */}
               <div className="form-group">
                 <label className="form-label">Password</label>
                 <input
@@ -558,11 +350,12 @@ export default function CTFAuthPortal() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  placeholder="••••••••••"
+                  placeholder="••••••••"
                   className="form-input"
                 />
               </div>
 
+              {/* Confirm Password (Register only) */}
               {!isLogin && (
                 <div className="form-group">
                   <label className="form-label">Confirm Password</label>
@@ -571,31 +364,73 @@ export default function CTFAuthPortal() {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    placeholder="••••••••••"
+                    placeholder="••••••••"
                     className="form-input"
                   />
                 </div>
               )}
 
-              <button onClick={handleSubmit} className="submit-btn">
-                {isLogin ? 'INITIATE ACCESS' : 'CREATE ACCOUNT'}
+              {/* Forgot Password (Login only) */}
+              {isLogin && (
+                <div className="forgot-password">
+                  <a
+                    href="#"
+                    className="forgot-link"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    Forgot Password?
+                  </a>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button onClick={handleSubmit} className="sign-in-btn">
+                {isLogin ? 'Sign In' : 'Create Account'}
               </button>
             </div>
 
-            {/* Toggle Section */}
-            <div className="toggle-section">
-              <p className="toggle-text">
-                {isLogin ? 'New to the arena?' : 'Already have access?'}
-              </p>
-              <button onClick={toggleMode} className="toggle-btn">
-                {isLogin ? 'Register Now' : 'Login Here'}
-              </button>
-            </div>
+            {/* Social Login (Login only) */}
+            {isLogin && (
+              <>
+                {/* Divider */}
+                <div className="divider">
+                  <div className="divider-line"></div>
+                  <span className="divider-text">or continue with</span>
+                  <div className="divider-line"></div>
+                </div>
 
-            {/* Terminal Prompt */}
-            <div className="terminal-prompt">
-              root@ctf:~$ {isLogin ? 'authenticate' : 'register'} --secure
-            </div>
+                {/* Social Login Buttons */}
+                <div className="social-buttons">
+                  <button onClick={handleGoogleLogin} className="social-btn">
+                    <svg className="social-icon" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                  </button>
+
+                  <button onClick={handleMicrosoftLogin} className="social-btn">
+                    <svg className="social-icon" viewBox="0 0 23 23">
+                      <path fill="#f35325" d="M0 0h11v11H0z"/>
+                      <path fill="#81bc06" d="M12 0h11v11H12z"/>
+                      <path fill="#05a6f0" d="M0 12h11v11H0z"/>
+                      <path fill="#ffba08" d="M12 12h11v11H12z"/>
+                    </svg>
+                    Microsoft
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Toggle between Login/Register */}
+            <p className="register-text">
+              {isLogin ? "Don't have an account yet? " : "Already have an account? "}
+              <span className="register-link" onClick={toggleMode}>
+                {isLogin ? 'Register for free' : 'Sign in here'}
+              </span>
+            </p>
           </div>
         </div>
       </div>
